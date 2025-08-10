@@ -1,0 +1,7 @@
+{
+  "builtin-baseline": "b1fbc2e5253f62b00b1ca4de03829a5b90c79545",
+  "dependencies": [
+  	"wxwidgets",
+  	"libxml2"
+  ]
+}
