@@ -5,7 +5,12 @@
 
 ConfigurationData::ConfigurationData()
 {
-	ConfigData = wxConfigBase::Create();
+	const auto appName = wxGetApp().GetAppName();
+	const auto vendorName = wxGetApp().GetVendorName();
+	wxFileName configPath(wxStandardPaths::Get().GetExecutablePath());
+	configPath.SetFullName(appName + wxT(".ini"));
+	ConfigData = new wxFileConfig(appName, vendorName, configPath.GetFullPath(), wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
+
 	ConfigData->SetExpandEnvVars(false); // we will not write env vars
 	ConfigData->Read(wxT("/openMSXpaths/ExecPath"), &m_openMSXExecPath);
 	ConfigData->Read(wxT("/configuration/InstalledMachines"), &m_installedMachines);
@@ -261,39 +266,7 @@ bool ConfigurationData::SaveData() const
 	retVal &= ConfigData->Write(wxT("/configuration/ViewFlags"), m_viewFlags);
 //	retVal &= ConfigData->Write(wxT("/connectors/UsedPrinterport"), m_usedPrinterport); //saving disabled
 //	retVal &= ConfigData->Write(wxT("/connectors/UsedPrinterfile"), m_usedPrinterfile);
-
-	const auto appName = wxGetApp().GetAppName();
-	const auto vendorName = wxGetApp().GetVendorName();
-	wxFileName configPath(wxStandardPaths::Get().GetExecutablePath());
-	configPath.SetFullName(appName + wxT(".ini"));
-	//MessageBoxA(nullptr, configPath.GetFullPath().data(), nullptr, MB_OK);
-	auto* fileConf = new wxFileConfig(appName, vendorName, configPath.GetFullPath(), wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
-
-	retVal &= fileConf->Write(wxT("/openMSXpaths/ExecPath"), m_openMSXExecPath);
-	retVal &= fileConf->Write(wxT("/configuration/InstalledMachines"), m_installedMachines);
-	retVal &= fileConf->Write(wxT("/configuration/InstalledExtensions"), m_installedExtensions);
-	retVal &= fileConf->Write(wxT("/history/DiskA"), m_diskaHistory);
-	retVal &= fileConf->Write(wxT("/history/DiskB"), m_diskbHistory);
-	retVal &= fileConf->Write(wxT("/history/CartA"), m_cartaHistory);
-	retVal &= fileConf->Write(wxT("/history/CartB"), m_cartbHistory);
-	retVal &= fileConf->Write(wxT("/history/Cassette"), m_cassetteHistory);
-	retVal &= fileConf->Write(wxT("/history/Harddisk"), m_hardDiskHistory);
-	retVal &= fileConf->Write(wxT("/history/IpsDiskA"), m_diskaIps);
-	retVal &= fileConf->Write(wxT("/history/IpsDiskB"), m_diskbIps);
-	retVal &= fileConf->Write(wxT("/history/IpsCartA"), m_cartaIps);
-	retVal &= fileConf->Write(wxT("/history/IpsCartB"), m_cartbIps);
-	retVal &= fileConf->Write(wxT("/history/TypeCartA"), m_typeHistCartA);
-	retVal &= fileConf->Write(wxT("/history/TypeCartB"), m_typeHistCartB);
-	retVal &= fileConf->Write(wxT("/history/MediaInserted"), m_mediaInserted);
-	retVal &= fileConf->Write(wxT("/history/UsedMachine"), m_usedMachine);
-	retVal &= fileConf->Write(wxT("/history/UsedExtensions"), m_usedExtensions);
-	retVal &= fileConf->Write(wxT("/preferences/ShowFullScreenWarning"), m_showFullScreenWarning);
-	retVal &= fileConf->Write(wxT("/preferences/ShowScreenshotInfo"), m_showScreenshotInfo);
-	retVal &= fileConf->Write(wxT("/preferences/AutoCreateCassetteRecordFile"), m_cassetteAutoCreate);
-	retVal &= fileConf->Write(wxT("/connectors/UsedJoyport1"), m_usedJoyport1);
-	retVal &= fileConf->Write(wxT("/connectors/UsedJoyport2"), m_usedjoyport2);
-	retVal &= fileConf->Write(wxT("/configuration/ViewFlags"), m_viewFlags);
-	retVal &= fileConf->Flush();
+	retVal &= ConfigData->Flush();
 
 	return retVal;
 }

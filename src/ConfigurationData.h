@@ -2,6 +2,7 @@
 #define CONFIGURATIONDATA_H
 
 #include "wxCatapultApp.h"
+#include <wx/fileconf.h>
 #include <wx/variant.h>
 
 class wxConfigBase;
@@ -70,7 +71,7 @@ private:
 	wxString m_usedPrinterport;
 	wxString m_usedPrinterfile;
 
-	wxConfigBase* ConfigData;
+	wxFileConfig* ConfigData;
 };
 
 #endif
